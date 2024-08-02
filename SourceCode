@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_PARAGRAPH_SIZE 1000
+#define MAX_WORDS 100
+#define MAX_WORD_SIZE 50
+
+typedef struct {
+    char word[MAX_WORD_SIZE];
+    int count;
+} WordFrequency;
+
+void toLowerCase(char *str) {
+    for (int i = 0; str[i]; i++) {
+        str[i] = tolower(str[i]);
+    }
+}
+
+int findWord(WordFrequency wordFreq[], int wordCount, char *word) {
+    for (int i = 0; i < wordCount; i++) {
+        if (strcmp(wordFreq[i].word, word) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int main() {
+    char paragraph[MAX_PARAGRAPH_SIZE];
+    WordFrequency wordFreq[MAX_WORDS] = {0};
+    int wordCount = 0;
+
+    printf("Enter a paragraph:\n");
+    fgets(paragraph, MAX_PARAGRAPH_SIZE, stdin);
+
+    char *token = strtok(paragraph, " ,.-\n");
+    while (token != NULL) {
+        toLowerCase(token);
+        int index = findWord(wordFreq, wordCount, token);
+        if (index != -1) {
+            wordFreq[index].count++;
+        } else {
+            strcpy(wordFreq[wordCount].word, token);
+            wordFreq[wordCount].count = 1;
+            wordCount++;
+        }
+        token = strtok(NULL, " ,.-\n");
+    }
+
+    printf("\nWord frequencies:\n");
+    for (int i = 0; i < wordCount; i++) {
+        printf("%s: %d\n", wordFreq[i].word, wordFreq[i].count);
+    }
+
+    return 0;
+}
